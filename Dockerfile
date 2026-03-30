@@ -1,5 +1,5 @@
 # Base Cloudera AI Runtime
-FROM docker.repository.cloudera.com/cloudera/cdsw/ml-runtime-pbj-workbench-r4.5-standard.Dockerfile
+FROM docker.repository.cloudera.com/cloudera/cdsw/ml-runtime-pbj-workbench-r4.5-standard:2026:01.1-b6
 
 # Switch to root to install R packages if needed
 USER root

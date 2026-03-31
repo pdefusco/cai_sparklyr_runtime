@@ -116,6 +116,10 @@ aws ecr describe-images \
   --region us-west-2
 ```
 
+Optionally validate the repository and image in the AWS ECR UI.
+
+![alt text](img/ecr-1.png)
+
 ### 3. Create Docker Credentials in Cloudera AI Workbench
 
 Navigate to "Site Administration" -> "Runtimes" -> "Docker Credentials" and create a new credential and set the following fields:

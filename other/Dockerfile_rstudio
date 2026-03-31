@@ -1,0 +1,75 @@
+# Start with updated CAI Runtime
+FROM docker.repository.cloudera.com/cloudera/cdsw/ml-runtime-pbj-workbench-r4.5-standard:2026.01.1-b6
+
+USER root
+
+# Update system packages
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends curl && \
+    rm -rf /var/lib/apt/lists/*
+
+# -----------------------------
+# Install Newer RStudio Server
+# (Updated version)
+# -----------------------------
+RUN curl -L https://download2.rstudio.org/server/jammy/amd64/rstudio-server-latest-amd64.deb -o rstudio-server.deb && \
+    dpkg -i rstudio-server.deb || apt-get update && apt-get install -f -y && \
+    rm rstudio-server.deb
+
+# -----------------------------
+# Install sparklyr (no Spark bundled)
+# -----------------------------
+RUN R -e "install.packages('sparklyr', repos='https://cloud.r-project.org', dependencies=TRUE)"
+
+# -----------------------------
+# Configure RStudio for CML
+# -----------------------------
+#RUN chown -R cdsw:cdsw /var/lib/rstudio-server && chmod -R 777 /var/lib/rstudio-server
+
+COPY rserver.conf /etc/rstudio/rserver.conf
+COPY rstudio-cml /usr/local/bin/rstudio-cml
+RUN chmod +x /usr/local/bin/rstudio-cml
+
+# Symlink for CML editor launcher
+RUN ln -s /usr/local/bin/rstudio-cml /usr/local/bin/ml-runtime-editor
+
+# Ensure R library path
+RUN export PATH=$PATH:/home/cdsw/R/x86_64-pc-linux-gnu-library/4.1
+
+# -----------------------------
+# Permissions (CML requirements)
+# -----------------------------
+RUN for i in /etc /var /etc/alternatives /var/lib/dpkg/ /home /runtime-addons; do \
+ if [ -d ${i} ]; then chmod 777 ${i}; fi; \
+ done
+
+RUN chown cdsw /
+
+RUN for i in /bin /var /etc /opt /var/lib/dpkg/ /sbin /usr /home /runtime-addons; do \
+ if [ -d ${i} ]; then \
+   chown cdsw ${i}; \
+   find ${i} -type d -exec chown cdsw {} +; \
+ fi; \
+ done
+
+# -----------------------------
+# Runtime Metadata
+# -----------------------------
+ENV ML_RUNTIME_EDITOR="RStudio" \
+    ML_RUNTIME_EDITION="RStudio 2026 Community Runtime" \
+    ML_RUNTIME_SHORT_VERSION="2026.03" \
+    ML_RUNTIME_MAINTENANCE_VERSION="0" \
+    ML_RUNTIME_FULL_VERSION="2026.03.0" \
+    ML_RUNTIME_DESCRIPTION="RStudio Server 2026.03 with sparklyr on PBJ Workbench 2026.01 runtime" \
+    ML_RUNTIME_KERNEL="R 4.5"
+
+LABEL com.cloudera.ml.runtime.editor=$ML_RUNTIME_EDITOR \
+      com.cloudera.ml.runtime.edition=$ML_RUNTIME_EDITION \
+      com.cloudera.ml.runtime.full-version=$ML_RUNTIME_FULL_VERSION \
+      com.cloudera.ml.runtime.short-version=$ML_RUNTIME_SHORT_VERSION \
+      com.cloudera.ml.runtime.maintenance-version=$ML_RUNTIME_MAINTENANCE_VERSION \
+      com.cloudera.ml.runtime.description=$ML_RUNTIME_DESCRIPTION \
+      com.cloudera.ml.runtime.kernel=$ML_RUNTIME_KERNEL
+
+# Default user back to cdsw
+USER cdsw

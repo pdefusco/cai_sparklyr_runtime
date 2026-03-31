@@ -6,11 +6,11 @@ This demo shows how to create a custom Sparkly R runtime extending the Cloudera 
 
 The demo is divided in five parts:
 
-1. Create Dockerfile
-2. Build and push image to AWS ECR
-3. Create Docker Credentials in CAI Workbench
-4. Import Runtime in the Catalog
-5. Run a Test Session
+1. [Create Dockerfile](https://github.com/pdefusco/cai_sparklyr_runtime?tab=readme-ov-file#1-create-dockerfile)
+2. [Build and push image to AWS ECR](https://github.com/pdefusco/cai_sparklyr_runtime?tab=readme-ov-file#2-build-and-push-image-to-aws-ecr)
+3. [Create Docker Credentials in CAI Workbench](https://github.com/pdefusco/cai_sparklyr_runtime?tab=readme-ov-file#3-create-docker-credentials-in-cloudera-ai-workbench)
+4. [Import Runtime in the Catalog](https://github.com/pdefusco/cai_sparklyr_runtime?tab=readme-ov-file#4-import-runtime-in-the-catalog-and-run-test-session)
+5. [Run a Test Session](https://github.com/pdefusco/cai_sparklyr_runtime?tab=readme-ov-file#5-run-test-session)
 
 This demo can be used as general reference for CAI admins and users who want to create custom R runtimes from a private ECR repository.
 
